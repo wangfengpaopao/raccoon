@@ -1,0 +1,18 @@
+{
+    name: "reccon",
+    description: "a front-end tool for NTES(beijing).",
+    author: {
+        name: "wangfeng",
+        email: "bjwangfeng@corp.netease.com",
+        url: "http://weibo/paopaomine"
+    },
+    contributors: [{
+        name: "xuxiang",
+        email:""
+    }],
+    version: "1.0.0",
+    dependencies: {
+    
+    
+    }
+}

@@ -1,0 +1,99 @@
+#common makefile template for NTES(beijing) by wangfeng
+
+BUILD_DATE=$(shell date)
+QA_PATH=<%- QAPath %>
+TMP_PATH=<%- tmpPath %>
+USERNAME=<%- username %>
+PASSWORD=<%- password %>
+RM=rm -rf
+CP=cp -Rf
+MKDIR= mkdir -p
+PWD=$(shell pwd)
+JS_COMPILER=uglifyjs
+CSS_COMPILER=cleancss
+CAT=cat
+
+<% if(staticList){ %>
+all: gen
+	echo "build successfully at $(BUILD_DATE)"
+gen: $(addprefix gen/webroot/static/,<%- staticList %>)
+	#archive to QA server
+	$(CP) gen/webroot/* $(QA_PATH)
+	
+	#commit
+	svn add gen --force
+	svn commit -m "project has been compiled successfully by $(USERNAME) at $(BUILD_DATE)" \
+			   --username $(USERNAME) \
+			   --password $(PASSWORD) \
+			   --no-auth-cache \
+			   --non-interactive
+
+<% } %>
+# script rule
+<% if(scripts.length){ %>
+gen/webroot/static/js: 	<% scripts.forEach(function(script){ %>gen/webroot/static/js/<%- script.name %> <% }) %>
+<% scripts.forEach(function(script){ %>
+	<% if(script.source.length){ %>
+gen/webroot/static/js/<%- script.name %>: <% script.source.forEach(function(source){ %> <%- source %> <% }) %>
+	echo "" > $@
+	$(foreach file, $^, $(CAT) "$(file)" >> $@; echo >> $@;)
+	$(JS_COMPILER) $@ -o $@
+	<% } %>
+<% }) %>
+<% } %>
+
+# style rule
+<% if(styles.length){ %>
+gen/webroot/static/css: <% styles.forEach(function(style){ %>gen/webroot/static/css/<%- style.name %> <% }) %>
+<% styles.forEach(function(style){ %>
+	<% if(style.source.length){ %>
+gen/webroot/static/css/<%- style.name %>: <% style.source.forEach(function(source){ %> <%- source %> <% }) %>
+	echo "" > $@
+	$(foreach file, $^, $(CAT) "$(file)" >> $@; echo >> $@;)
+	$(CSS_COMPILER) -e -o $@ $@
+
+	<% } %>
+<% }) %>
+<% } %>
+
+# view rule
+<% if(views.length){ %>
+gen/webroot/static/view: <% views.forEach(function(view){ %>gen/webroot/static/view/<%- view.name %> <% }) %>
+<% views.forEach(function(view){ %>
+	<% if(view.source.length){ %>
+gen/webroot/static/view/<%- view.name %>: <% view.source.forEach(function(source){ %> <%- source %> <% }) %>
+	#todo
+	<% } %>
+<% }) %>
+<% } %>
+
+clean:
+	#clean gen dir
+	$([ -d gen ] && svn rm gen)
+	$(MKDIR) gen/webroot/static/view gen/webroot/static/css gen/webroot/static/js gen/webroot/static/images
+	$([ -d src/images ] && $(CP) src/images  gen/webroot/static/)
+
+		#create concat files
+		#script
+	<% if(scripts.length){ %>
+		<% scripts.forEach(function(script){ %>
+	touch -d "01/01/2000" gen/webroot/static/js/<%- script.name %>
+		<% }) %>
+	<% } %>
+		#style
+	<% if(styles.length){ %>
+		<% styles.forEach(function(style){ %>
+	touch  -d "01/01/2000" gen/webroot/static/css/<%- style.name %>
+		<% }) %>
+	<% } %>
+
+		#view
+	<% if(views.length){ %>
+		<% views.forEach(function(view){ %>
+	touch  -d "01/01/2000" gen/webroot/static/view/<%- view.name %>
+		<% }) %>
+	<% } %>
+	#clean QA dir
+	$(RM) $(QA_PATH)
+	$(MKDIR) $(QA_PATH)
+	
