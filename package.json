@@ -1,18 +1,29 @@
 {
-    name: "reccon",
-    description: "a front-end tool for NTES(beijing).",
-    author: {
-        name: "wangfeng",
-        email: "bjwangfeng@corp.netease.com",
-        url: "http://weibo/paopaomine"
-    },
-    contributors: [{
-        name: "xuxiang",
-        email:""
-    }],
-    version: "1.0.0",
-    dependencies: {
-    
-    
-    }
+  "name": "raccoon",
+  "version": "0.0.1",
+  "description": "front end tools",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wangfengpaopao/raccoon.git"
+  },  
+  "dependencies": {
+        "express": "3.0.6",
+        "ejs": ">=0.8.0",
+        "underscore": "*",
+        "wind": "*" 
+  },
+  
+  "keywords": [
+    "nodejs",
+    "front",
+    "end",
+    "tools"
+  ],
+  "author": "bjwangfeng@netease.corp.com",
+  "license": "BSD",
+  "readmeFilename": "README.md"
 }

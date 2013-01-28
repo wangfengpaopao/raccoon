@@ -10,7 +10,6 @@ var fs = require("fs"),
     
     verboseExceAsync = Wind.Async.Binding.fromCallback(lib.verboseExec),
 
-
     compile = function(req, res, cb){
         var 
             username = req.body.username,
